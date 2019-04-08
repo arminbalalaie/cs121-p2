@@ -26,11 +26,12 @@ class Crawler:
         you can do this using the str built-in function) and return a dictionary containing the url, content and content
         size
         :param url: the url to be fetched
-        :return: a dictionary containing the url, UTF-8 encoded content and the size of the content
+        :return: a dictionary containing the url, UTF-8 encoded content and the size of the content. If the url does not
+        exist in the corpus, a dictionary with content set to None and size set to 0 can be returned.
         """
         url_data = {
             "url": url,
-            "content": "",
+            "content": None,
             "size": 0
         }
         return url_data
