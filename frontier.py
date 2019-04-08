@@ -14,7 +14,7 @@ class Frontier:
     Attributes:
         urls_queue: A queue of urls to be download by crawlers
         urls_set: A set of urls to avoid duplicated urls
-        downloaded: the number of downloaded urls so far
+        fetched: the number of fetched urls so far
     """
 
     # File names to be used when loading and saving the frontier state
@@ -27,7 +27,7 @@ class Frontier:
     def __init__(self):
         self.urls_queue = deque()
         self.urls_set = set()
-        self.downloaded = 0
+        self.fetched = 0
 
     def add_url(self, url):
         """
@@ -43,7 +43,7 @@ class Frontier:
         Returns the next url to be downloaded
         """
         if self.has_next_url():
-            self.downloaded += 1
+            self.fetched += 1
             return self.urls_queue.popleft()
 
     def has_next_url(self):
@@ -64,7 +64,7 @@ class Frontier:
         downloaded_file = open(self.DOWNLOAD_FINE_NAME, "wb")
         pickle.dump(self.urls_queue, url_queue_file)
         pickle.dump(self.urls_set, url_set_file)
-        pickle.dump(self.downloaded, downloaded_file)
+        pickle.dump(self.fetched, downloaded_file)
 
     def load_frontier(self):
         """
@@ -75,8 +75,8 @@ class Frontier:
             try:
                 self.urls_queue = pickle.load(open(self.URL_QUEUE_FILE_NAME, "rb"))
                 self.urls_set = pickle.load(open(self.URL_SET_FILE_NAME, "rb"))
-                self.downloaded = pickle.load(open(self.DOWNLOAD_FINE_NAME, "rb"))
-                logger.info("Loaded previous frontier state into memory. Downloaded: %s, Queue size: %s", self.downloaded,
+                self.fetched = pickle.load(open(self.DOWNLOAD_FINE_NAME, "rb"))
+                logger.info("Loaded previous frontier state into memory. Fetched: %s, Queue size: %s", self.fetched,
                             len(self.urls_queue))
             except:
                 pass
@@ -84,4 +84,6 @@ class Frontier:
             logger.info("No previous frontier state found. Starting from the seed URL ...")
             self.add_url("https://ics.uci.edu")
 
+    def __len__(self):
+        return len(self.urls_queue)
 

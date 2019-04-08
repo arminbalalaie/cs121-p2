@@ -12,7 +12,7 @@ class Crawler:
     def start_crawling(self):
         while self.frontier.has_next_url():
             url = self.frontier.get_next_url()
-            logger.info("Fetching URL %s ...", url)
+            logger.info("Fetching URL %s ... Fetched: %s, Queue size: %s", url, self.frontier.downloaded, len(self.frontier))
             url_data = self.fetch_url(url)
 
             for next_link in self.extract_next_links(url_data):
