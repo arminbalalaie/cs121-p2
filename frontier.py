@@ -21,7 +21,7 @@ class Frontier:
     FRONTIER_DIR_NAME = "frontier_state"
     URL_QUEUE_FILE_NAME = os.path.join(".", FRONTIER_DIR_NAME, "url_queue.pkl")
     URL_SET_FILE_NAME = os.path.join(".", FRONTIER_DIR_NAME, "url_set.pkl")
-    DOWNLOAD_FINE_NAME = os.path.join(".", FRONTIER_DIR_NAME, "downloaded.pkl")
+    FETCHED_FILE_NAME = os.path.join(".", FRONTIER_DIR_NAME, "fetched.pkl")
 
 
     def __init__(self):
@@ -34,13 +34,16 @@ class Frontier:
         Adds a url to the urls queue
         :param url: the url to be added
         """
-        if url not in self.urls_set:
+        if not self.is_duplicate(url):
             self.urls_queue.append(url)
             self.urls_set.add(url)
 
+    def is_duplicate(self, url):
+        return url in self.urls_set
+
     def get_next_url(self):
         """
-        Returns the next url to be downloaded
+        Returns the next url to be fetched
         """
         if self.has_next_url():
             self.fetched += 1
@@ -61,21 +64,21 @@ class Frontier:
 
         url_queue_file = open(self.URL_QUEUE_FILE_NAME, "wb")
         url_set_file = open(self.URL_SET_FILE_NAME, "wb")
-        downloaded_file = open(self.DOWNLOAD_FINE_NAME, "wb")
+        fetched_file = open(self.FETCHED_FILE_NAME, "wb")
         pickle.dump(self.urls_queue, url_queue_file)
         pickle.dump(self.urls_set, url_set_file)
-        pickle.dump(self.fetched, downloaded_file)
+        pickle.dump(self.fetched, fetched_file)
 
     def load_frontier(self):
         """
         loads the previous state of the frontier into memory, if exists
         """
         if os.path.isfile(self.URL_QUEUE_FILE_NAME) and os.path.isfile(self.URL_SET_FILE_NAME) and\
-                os.path.isfile(self.DOWNLOAD_FINE_NAME):
+                os.path.isfile(self.FETCHED_FILE_NAME):
             try:
                 self.urls_queue = pickle.load(open(self.URL_QUEUE_FILE_NAME, "rb"))
                 self.urls_set = pickle.load(open(self.URL_SET_FILE_NAME, "rb"))
-                self.fetched = pickle.load(open(self.DOWNLOAD_FINE_NAME, "rb"))
+                self.fetched = pickle.load(open(self.FETCHED_FILE_NAME, "rb"))
                 logger.info("Loaded previous frontier state into memory. Fetched: %s, Queue size: %s", self.fetched,
                             len(self.urls_queue))
             except:
