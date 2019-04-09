@@ -103,7 +103,6 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-WEBPAGES_RAW
 *.iml
 .idea
 frontier_state
