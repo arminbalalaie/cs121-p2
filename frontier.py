@@ -85,7 +85,7 @@ class Frontier:
                 pass
         else:
             logger.info("No previous frontier state found. Starting from the seed URL ...")
-            self.add_url("https://ics.uci.edu")
+            self.add_url("http://www.ics.uci.edu/")
 
     def __len__(self):
         return len(self.urls_queue)

@@ -1,7 +1,6 @@
 import logging
 import re
 from urllib.parse import urlparse
-from corpus import Corpus
 
 logger = logging.getLogger(__name__)
 
@@ -11,9 +10,9 @@ class Crawler:
     the frontier
     """
 
-    def __init__(self, frontier):
+    def __init__(self, frontier, corpus):
         self.frontier = frontier
-        self.corpus = Corpus()
+        self.corpus = corpus
 
     def start_crawling(self):
         """
@@ -23,27 +22,12 @@ class Crawler:
         while self.frontier.has_next_url():
             url = self.frontier.get_next_url()
             logger.info("Fetching URL %s ... Fetched: %s, Queue size: %s", url, self.frontier.fetched, len(self.frontier))
-            url_data = self.fetch_url(url)
+            url_data = self.corpus.fetch_url(url)
 
             for next_link in self.extract_next_links(url_data):
-                if self.corpus.get_file_name(next_link) is not None:
-                    if self.is_valid(next_link):
+                if self.is_valid(next_link):
+                    if self.corpus.get_file_name(next_link) is not None:
                         self.frontier.add_url(next_link)
-
-    def fetch_url(self, url):
-        """
-        This method, using the given url, should find the corresponding file in the corpus and return a dictionary
-        containing the url, content of the file in binary format and the content size in bytes
-        :param url: the url to be fetched
-        :return: a dictionary containing the url, content and the size of the content. If the url does not
-        exist in the corpus, a dictionary with content set to None and size set to 0 can be returned.
-        """
-        url_data = {
-            "url": url,
-            "content": None,
-            "size": 0
-        }
-        return url_data
 
     def extract_next_links(self, url_data):
         """
